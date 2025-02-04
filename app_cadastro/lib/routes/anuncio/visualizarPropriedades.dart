@@ -87,7 +87,8 @@ class _VerPropsState extends State<VerProps> {
                   return const Center(child: Text('No properties found'));
                 } else {
                   final properties = snapshot.data!;
-                  return ListView.builder(
+                  return Expanded(
+                      child: ListView.builder(
                     shrinkWrap: true,
                     itemCount: properties.length,
                     itemBuilder: (context, index) {
@@ -110,7 +111,7 @@ class _VerPropsState extends State<VerProps> {
                         ),
                       );
                     },
-                  );
+                  ));
                 }
               },
             )

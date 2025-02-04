@@ -1,7 +1,6 @@
 import 'package:app_cadastro/models/user.dart';
 import 'package:app_cadastro/services/cepService.dart';
 import 'package:flutter/material.dart';
-import 'package:app_cadastro/models/property.dart';
 import 'package:app_cadastro/services/dbService.dart';
 
 class CadastrarProp extends StatefulWidget {
