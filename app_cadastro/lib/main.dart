@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:app_cadastro/routes/anuncio/visualizarPropriedades.dart';
 import 'package:app_cadastro/routes/login.dart';
 import 'package:app_cadastro/routes/cadastrar.dart';
 import 'package:sqflite/sqflite.dart';
@@ -27,6 +28,7 @@ Future main() async {
     routes: {
       '/login': (context) => const Login(),
       '/cadastrar': (context) => const Cadastro(),
+      '/verProps': (context) => const VerProps(),
     },
   ));
 }

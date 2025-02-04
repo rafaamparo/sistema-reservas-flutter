@@ -61,7 +61,8 @@ class _LoginState extends State<Login> {
                         final user = await DatabaseService.instance
                             .login(email, password);
                         if (user != null) {
-                          Navigator.pushNamed(context, '/reservas');
+                          Navigator.pushNamed(context, '/verProps',
+                              arguments: user);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Failed login')),
