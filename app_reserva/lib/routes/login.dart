@@ -30,7 +30,7 @@ class _LoginState extends State<Login> {
                 children: [
                   const Center(
                     child: Text(
-                      'Faça login para cadastrar propriedades',
+                      'Faça login para reservar propriedades',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -62,7 +62,8 @@ class _LoginState extends State<Login> {
                         final user = await DatabaseService.instance
                             .login(email, password);
                         if (user != null) {
-                          Navigator.pushNamed(context, '/', arguments: user);
+                          Navigator.pushNamed(context, '/busca',
+                              arguments: user);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Failed login')),

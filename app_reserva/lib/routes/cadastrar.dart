@@ -70,12 +70,14 @@ class _CadastroState extends State<Cadastro> {
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Informe o nome' : null,
               ),
+              const SizedBox(height: 8),
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Informe o email' : null,
               ),
+              const SizedBox(height: 8),
               TextFormField(
                 controller: _passwordController,
                 decoration: const InputDecoration(labelText: 'Senha'),
@@ -83,6 +85,7 @@ class _CadastroState extends State<Cadastro> {
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Informe a senha' : null,
               ),
+              const SizedBox(height: 8),
               TextFormField(
                 controller: _confirmPasswordController,
                 decoration: const InputDecoration(labelText: 'Confirmar Senha'),

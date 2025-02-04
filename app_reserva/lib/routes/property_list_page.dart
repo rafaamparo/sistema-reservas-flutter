@@ -121,6 +121,11 @@ class _PropertyListPageState extends State<PropertyListPage> {
               title: const Text('Sair'),
               onTap: _logout,
             ),
+            ListTile(
+              leading: const Icon(Icons.home_filled),
+              title: const Text('Minhas Reservas'),
+              onTap: () => Navigator.pushNamed(context, '/minhasReservas'),
+            ),
           ],
         ),
       ),
@@ -250,22 +255,50 @@ class _PropertyListPageState extends State<PropertyListPage> {
                             final property = properties[index];
                             return Card(
                               margin: const EdgeInsets.all(8),
-                              child: ListTile(
-                                leading: Image.network(property.thumbnail ==
-                                        'image_path'
-                                    ? 'https://png.pngtree.com/png-vector/20240528/ourmid/pngtree-elegant-modern-mansion-with-parked-car-illustration-png-image_12509753.png'
-                                    : property.thumbnail),
-                                title: Text(property.title),
-                                subtitle: Row(
-                                  children: [
-                                    const Icon(Icons.star,
-                                        color: Colors.amber, size: 16),
-                                    const SizedBox(width: 4),
-                                    Text(property.rating.toStringAsFixed(1)),
-                                  ],
+                              child: InkWell(
+                                onTap: () {
+                                  if (userAtual == null) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Atenção'),
+                                        content: const Text(
+                                            'Você precisa estar logado para ver os detalhes da propriedade.'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  } else {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/propertyDetails', // Ensure your route exists
+                                      arguments: property,
+                                    );
+                                  }
+                                },
+                                child: ListTile(
+                                  leading: Image.network(
+                                    property.thumbnail == 'image_path'
+                                        ? 'https://png.pngtree.com/png-vector/20240528/ourmid/pngtree-elegant-modern-mansion-with-parked-car-illustration-png-image_12509753.png'
+                                        : property.thumbnail,
+                                  ),
+                                  title: Text(property.title),
+                                  subtitle: Row(
+                                    children: [
+                                      const Icon(Icons.star,
+                                          color: Colors.amber, size: 16),
+                                      const SizedBox(width: 4),
+                                      Text(property.rating.toStringAsFixed(1)),
+                                    ],
+                                  ),
+                                  trailing: Text(
+                                      'R\$ ${property.price.toStringAsFixed(2)}'),
                                 ),
-                                trailing: Text(
-                                    'R\$ ${property.price.toStringAsFixed(2)}'),
                               ),
                             );
                           },
