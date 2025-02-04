@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:app_reserva/routes/cadastrar.dart';
 import 'package:app_reserva/routes/login.dart';
+import 'package:app_reserva/routes/property_details_page.dart';
 import 'package:app_reserva/routes/property_list_page.dart';
 import 'package:app_reserva/routes/welcome.dart';
 import 'package:app_reserva/theme/appTheme.dart';
@@ -31,6 +32,7 @@ Future main() async {
       '/login': (context) => const Login(),
       '/cadastrar': (context) => const Cadastro(),
       '/busca': (context) => const PropertyListPage(),
+      '/detalhes': (context) => const PropertyDetailsPage(),
     },
   ));
 }

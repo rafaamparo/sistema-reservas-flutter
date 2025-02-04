@@ -276,4 +276,27 @@ select id, checkin_date, strftime('%d', checkin_date) as 'Day' from booking wher
         : 0.0;
     return avgRating;
   }
+
+  Future<void> createBooking(
+      {required int userId,
+      required Property property,
+      required DateTime checkin,
+      required DateTime checkout,
+      required int amountGuest}) async {
+    final db = await database;
+    final totalDays = checkout.difference(checkin).inDays;
+    final totalPrice = totalDays * property.price;
+    await db.rawInsert(
+      'INSERT INTO booking(user_id, property_id, checkin_date, checkout_date, total_days, total_price, amount_guest) VALUES(?, ?, ?, ?, ?, ?, ?)',
+      [
+        userId,
+        property.id,
+        checkin.toIso8601String().substring(0, 10),
+        checkout.toIso8601String().substring(0, 10),
+        totalDays,
+        totalPrice,
+        amountGuest,
+      ],
+    );
+  }
 }

@@ -276,8 +276,11 @@ class _PropertyListPageState extends State<PropertyListPage> {
                                   } else {
                                     Navigator.pushNamed(
                                       context,
-                                      '/propertyDetails', // Ensure your route exists
-                                      arguments: property,
+                                      '/detalhes', // Ensure your route exists
+                                      arguments: {
+                                        'property': property,
+                                        'user': userAtual,
+                                      },
                                     );
                                   }
                                 },
