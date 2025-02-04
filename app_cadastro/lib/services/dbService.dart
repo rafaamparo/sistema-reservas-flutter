@@ -1,4 +1,6 @@
 import 'package:app_cadastro/models/property.dart';
+import 'package:flutter/foundation.dart';
+import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:app_cadastro/models/user.dart';
 import 'package:path_provider/path_provider.dart';
@@ -9,17 +11,22 @@ class DatabaseService {
   DatabaseService._constructor();
 
   Future<Database> get database async {
-    if (_db != null)
+    if (_db != null) {
       return _db!;
-    else {
+    } else {
       _db = await getDatabase();
       return _db!;
     }
   }
 
   Future<Database> getDatabase() async {
-    final databaseDirPath = await getApplicationDocumentsDirectory();
-    final databasePath = '${databaseDirPath.path}/reservasDb.db';
+    String databasePath = '';
+    if (kIsWeb) {
+      databasePath = 'reserva_db.db';
+    } else {
+      final databaseDirPath = await getApplicationDocumentsDirectory();
+      databasePath = join(databaseDirPath.path, '', 'reserva_db.db');
+    }
     final database = await openDatabase(
       databasePath,
       version: 1,
@@ -130,7 +137,7 @@ select id, checkin_date, strftime('%d', checkin_date) as 'Day' from booking wher
   }
 
   Future<Property> addProperty(
-      int user_id,
+      int userId,
       String cep,
       String logradouro,
       String bairro,
@@ -142,50 +149,50 @@ select id, checkin_date, strftime('%d', checkin_date) as 'Day' from booking wher
       int number,
       String complement,
       double price,
-      int max_guest,
+      int maxGuest,
       String thumbnail) async {
     final db = await database;
-    int property_id = 0;
-    int address_id = 0;
+    int propertyId = 0;
+    int addressId = 0;
     await db.transaction((txn) async {
-      address_id = await txn.rawInsert(
+      addressId = await txn.rawInsert(
           'INSERT INTO address(cep, logradouro, bairro, localidade, uf, estado) VALUES(?, ?, ?, ?, ?, ?)',
           [cep, logradouro, bairro, localidade, uf, estado]);
 
-      property_id = await txn.rawInsert(
+      propertyId = await txn.rawInsert(
           'INSERT INTO property(user_id, address_id, title, description, number, complement, price, max_guest, thumbnail) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)',
           [
-            user_id,
-            address_id,
+            userId,
+            addressId,
             title,
             description,
             number,
             complement,
             price,
-            max_guest,
+            maxGuest,
             thumbnail
           ]);
     });
 
     return Property(
-        id: property_id,
-        user_id: user_id,
-        address_id: address_id,
+        id: propertyId,
+        user_id: userId,
+        address_id: addressId,
         title: title,
         description: description,
         number: number,
         complement: complement,
         price: price,
-        max_guest: max_guest,
+        max_guest: maxGuest,
         thumbnail: thumbnail);
   }
 
-  Future<void> addImg(int property_id, List<String> images) async {
+  Future<void> addImg(int propertyId, List<String> images) async {
     final db = await database;
     await db.transaction((t) async {
       for (var image in images) {
         await t.rawInsert('INSERT INTO images(property_id, path) VALUES(?, ?)',
-            [property_id, image]);
+            [propertyId, image]);
       }
     });
   }
