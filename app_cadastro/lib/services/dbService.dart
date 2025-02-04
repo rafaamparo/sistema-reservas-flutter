@@ -155,10 +155,16 @@ select id, checkin_date, strftime('%d', checkin_date) as 'Day' from booking wher
     int propertyId = 0;
     int addressId = 0;
     await db.transaction((txn) async {
-      addressId = await txn.rawInsert(
-          'INSERT INTO address(cep, logradouro, bairro, localidade, uf, estado) VALUES(?, ?, ?, ?, ?, ?)',
-          [cep, logradouro, bairro, localidade, uf, estado]);
+      final address =
+          await txn.rawQuery('SELECT id FROM address WHERE cep = ?', [cep]);
 
+      if (address.isNotEmpty) {
+        addressId = address.first['id'] as int;
+      } else {
+        addressId = await txn.rawInsert(
+            'INSERT INTO address(cep, logradouro, bairro, localidade, uf, estado) VALUES(?, ?, ?, ?, ?, ?)',
+            [cep, logradouro, bairro, localidade, uf, estado]);
+      }
       propertyId = await txn.rawInsert(
           'INSERT INTO property(user_id, address_id, title, description, number, complement, price, max_guest, thumbnail) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)',
           [
@@ -250,14 +256,11 @@ select id, checkin_date, strftime('%d', checkin_date) as 'Day' from booking wher
         whereArgs: [propertyId],
       );
       if (result.isNotEmpty) {
-        final addressId = result.first['address_id'];
         // Deleta imagens
         await txn.delete('images',
             where: 'property_id = ?', whereArgs: [propertyId]);
         // Deleta propriedade
         await txn.delete('property', where: 'id = ?', whereArgs: [propertyId]);
-        // Deleta endereco
-        await txn.delete('address', where: 'id = ?', whereArgs: [addressId]);
       }
     });
   }

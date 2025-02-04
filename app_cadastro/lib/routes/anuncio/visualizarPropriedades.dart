@@ -1,7 +1,7 @@
 import 'package:app_cadastro/models/user.dart';
 import 'package:app_cadastro/services/dbService.dart';
 import 'package:flutter/material.dart';
-import 'package:app_cadastro/models/property.dart'; // Import the Property model
+import 'package:app_cadastro/models/property.dart';
 
 class VerProps extends StatefulWidget {
   const VerProps({super.key});
@@ -32,8 +32,6 @@ class _VerPropsState extends State<VerProps> {
   }
 
   Future<void> _fetchProperties() async {
-    // final propriedades =
-    //     await _databaseService.getPropertiesByUserId(userAtual.id);
     setState(() {
       _propertiesFuture = _databaseService.getPropertiesByUserId(userAtual.id);
     });
@@ -42,66 +40,81 @@ class _VerPropsState extends State<VerProps> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('TRIV Reservas - Minhas Propriedades'),
-        backgroundColor: Colors.purple,
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            UserAccountsDrawerHeader(
-              accountName: Text(userAtual.name),
-              accountEmail: Text(userAtual.email),
-              currentAccountPicture: const CircleAvatar(
-                child: Icon(Icons.person),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.exit_to_app),
-              title: const Text('Sair'),
-              onTap: _logout,
-            ),
-          ],
+        appBar: AppBar(
+          title: const Text('TRIV Reservas - Minhas Propriedades'),
+          backgroundColor: Colors.purple,
         ),
-      ),
-      body: FutureBuilder<List<Property>>(
-        future: _propertiesFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            print(snapshot.error);
-            return const Center(child: Text('Error loading properties'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No properties found'));
-          } else {
-            final properties = snapshot.data!;
-            return ListView.builder(
-              itemCount: properties.length,
-              itemBuilder: (context, index) {
-                final property = properties[index];
-                return Card(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/verProp',
-                          arguments: property);
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              UserAccountsDrawerHeader(
+                  accountName: Text(userAtual.name),
+                  accountEmail: Text(userAtual.email)),
+              ListTile(
+                leading: const Icon(Icons.home),
+                title: const Text('Minhas Propriedades'),
+                onTap: () {
+                  Navigator.pushNamed(context, '/verProps',
+                      arguments: userAtual);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.exit_to_app),
+                title: const Text('Sair'),
+                onTap: _logout,
+              ),
+            ],
+          ),
+        ),
+        body: Column(
+          children: [
+            const SizedBox(height: 16),
+            FilledButton(
+                onPressed: () => Navigator.pushNamed(context, '/cadastrarProp',
+                    arguments: userAtual),
+                child: const Text('Cadastrar nova propriedade')),
+            const SizedBox(height: 16),
+            FutureBuilder<List<Property>>(
+              future: _propertiesFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  print(snapshot.error);
+                  return const Center(child: Text('Error loading properties'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('No properties found'));
+                } else {
+                  final properties = snapshot.data!;
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: properties.length,
+                    itemBuilder: (context, index) {
+                      final property = properties[index];
+                      return Card(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/verProp',
+                                arguments: property);
+                          },
+                          child: ListTile(
+                            leading: Image.network(property.thumbnail ==
+                                    'image_path'
+                                ? 'https://png.pngtree.com/png-vector/20240528/ourmid/pngtree-elegant-modern-mansion-with-parked-car-illustration-png-image_12509753.png'
+                                : property.thumbnail),
+                            title: Text(property.title),
+                            subtitle: Text(property.description),
+                            trailing: Text('R\$ ${property.price}'),
+                          ),
+                        ),
+                      );
                     },
-                    child: ListTile(
-                      leading: Image.network(property.thumbnail == 'image_path'
-                          ? 'https://png.pngtree.com/png-vector/20240528/ourmid/pngtree-elegant-modern-mansion-with-parked-car-illustration-png-image_12509753.png'
-                          : property.thumbnail),
-                      title: Text(property.title),
-                      subtitle: Text(property.description),
-                      trailing: Text('R\$ ${property.price}'),
-                    ),
-                  ),
-                );
+                  );
+                }
               },
-            );
-          }
-        },
-      ),
-    );
+            )
+          ],
+        ));
   }
 }
