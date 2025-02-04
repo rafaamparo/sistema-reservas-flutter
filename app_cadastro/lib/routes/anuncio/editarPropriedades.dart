@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:app_cadastro/models/property.dart';
 import 'package:app_cadastro/models/adress.dart';
 import 'package:app_cadastro/services/dbService.dart';
+import 'package:app_cadastro/services/cepService.dart';
 
 class EditarProp extends StatefulWidget {
   const EditarProp({super.key});
@@ -99,6 +100,26 @@ class _EditarPropState extends State<EditarProp> {
     }
   }
 
+  Future<void> _fetchCep() async {
+    try {
+      final address = await ViaCepService().viaCep(_cepController.text);
+      setState(() {
+        _logradouroController.text = address.logradouro;
+        _bairroController.text = address.bairro;
+        _localidadeController.text = address.localidade;
+        _ufController.text = address.uf;
+        _estadoController.text = address.estado;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Endereço preenchido')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao buscar CEP')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,6 +138,11 @@ class _EditarPropState extends State<EditarProp> {
                 decoration: const InputDecoration(labelText: 'CEP'),
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Informe o CEP' : null,
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: _fetchCep,
+                child: const Text('Buscar CEP'),
               ),
               TextFormField(
                 controller: _logradouroController,

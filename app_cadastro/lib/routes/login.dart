@@ -78,7 +78,7 @@ class _LoginState extends State<Login> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        // Add subscribe functionality here.
+                        Navigator.pushNamed(context, '/cadastrar');
                       },
                       child: const Text('Cadastrar-se'),
                     ),

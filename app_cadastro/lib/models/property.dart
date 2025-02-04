@@ -8,7 +8,7 @@ class Property {
   final String complement;
   final double price;
   final int max_guest;
-  final String thumbnail;
+  String thumbnail = 'image_path';
 
   Property(
       {required this.id,
@@ -20,5 +20,5 @@ class Property {
       required this.complement,
       required this.price,
       required this.max_guest,
-      required this.thumbnail});
+      this.thumbnail = 'image_path'});
 }
