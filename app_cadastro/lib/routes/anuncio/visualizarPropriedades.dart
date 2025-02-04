@@ -41,7 +41,8 @@ class _VerPropsState extends State<VerProps> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('TRIV Reservas - Minhas Propriedades'),
+          title: const Text('TRIV Reservas - Minhas Propriedades',
+              style: TextStyle(color: Colors.white)),
           backgroundColor: Colors.purple,
         ),
         drawer: Drawer(
@@ -75,6 +76,9 @@ class _VerPropsState extends State<VerProps> {
                     arguments: userAtual),
                 child: const Text('Cadastrar nova propriedade')),
             const SizedBox(height: 16),
+            const Text('Selecione uma propriedade para editá-la',
+                style: TextStyle(fontSize: 20)),
+            const SizedBox(height: 16),
             FutureBuilder<List<Property>>(
               future: _propertiesFuture,
               builder: (context, snapshot) {
@@ -96,7 +100,7 @@ class _VerPropsState extends State<VerProps> {
                       return Card(
                         child: InkWell(
                           onTap: () {
-                            Navigator.pushNamed(context, '/verProp',
+                            Navigator.pushNamed(context, '/editarProp',
                                 arguments: property);
                           },
                           child: ListTile(

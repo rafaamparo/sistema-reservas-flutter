@@ -16,7 +16,8 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('TRIV Reservas'),
+        title:
+            const Text('TRIV Reservas', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.purple,
       ),
       body: Center(

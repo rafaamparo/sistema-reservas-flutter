@@ -112,7 +112,8 @@ class _CadastrarPropState extends State<CadastrarProp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('TRIV Reservas - Cadastre uma propriedade'),
+        title: const Text('TRIV Reservas - Cadastre uma propriedade',
+            style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.purple,
         iconTheme: const IconThemeData(color: Colors.white),
         titleTextStyle: const TextStyle(
@@ -153,11 +154,13 @@ class _CadastrarPropState extends State<CadastrarProp> {
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Informe o CEP' : null,
               ),
+              SizedBox(height: 10),
               ElevatedButton(
                 onPressed: _fetchCep,
                 child: const Text('Buscar CEP'),
               ),
               // Campos de endereço
+              SizedBox(height: 10),
               TextFormField(
                 controller: _logradouroController,
                 decoration: const InputDecoration(labelText: 'Logradouro'),

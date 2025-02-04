@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:app_cadastro/routes/anuncio/cadastrarProp.dart';
+import 'package:app_cadastro/routes/anuncio/editarPropriedades.dart';
 import 'package:app_cadastro/routes/anuncio/visualizarPropriedades.dart';
 import 'package:app_cadastro/routes/login.dart';
 import 'package:app_cadastro/routes/cadastrar.dart';
@@ -31,6 +32,7 @@ Future main() async {
       '/cadastrar': (context) => const Cadastro(),
       '/verProps': (context) => const VerProps(),
       '/cadastrarProp': (context) => const CadastrarProp(),
+      '/editarProp': (context) => const EditarProp(),
     },
   ));
 }

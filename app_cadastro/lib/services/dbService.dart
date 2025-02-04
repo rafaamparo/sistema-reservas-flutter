@@ -1,3 +1,4 @@
+import 'package:app_cadastro/models/adress.dart';
 import 'package:app_cadastro/models/property.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
@@ -267,71 +268,89 @@ select id, checkin_date, strftime('%d', checkin_date) as 'Day' from booking wher
 
   Future<void> editProperty({
     required int propertyId,
-    required String title,
-    required String description,
-    required int number,
-    String? complement,
-    required double price,
-    required int max_guest,
-    required String thumbnail,
     required String cep,
     required String logradouro,
     required String bairro,
     required String localidade,
     required String uf,
     required String estado,
-    required List<String> images,
+    required String title,
+    required String description,
+    required int number,
+    String? complement,
+    required double price,
+    required int max_guest,
+    String thumbnail = '',
   }) async {
     final db = await database;
     await db.transaction((txn) async {
-      final List<Map<String, dynamic>> result = await txn.query(
-        'property',
-        columns: ['address_id'],
-        where: 'id = ?',
-        whereArgs: [propertyId],
+      final propertyRow = await txn.rawQuery(
+        'SELECT address_id FROM property WHERE id = ?',
+        [propertyId],
       );
-      if (result.isEmpty) {
-        throw Exception('Property not found');
+      if (propertyRow.isEmpty) throw Exception('Propriedade não encontrada');
+      final addressId = propertyRow.first['address_id'] as int;
+
+      final oldCepResult = await txn
+          .rawQuery('SELECT cep FROM address WHERE id = ?', [addressId]);
+      String oldCep = oldCepResult.first['cep'] as String;
+
+      if (cep != oldCep) {
+        final address =
+            await txn.rawQuery('SELECT id FROM address WHERE cep = ?', [cep]);
+        if (address.isNotEmpty) {
+          await txn.rawUpdate('UPDATE property SET address_id = ? WHERE id = ?',
+              [address.first['id'], propertyId]);
+        } else {
+          int new_address_id = await txn.rawInsert(
+              'INSERT INTO address(cep, logradouro, bairro, localidade, uf, estado) VALUES(?, ?, ?, ?, ?, ?)',
+              [cep, logradouro, bairro, localidade, uf, estado]);
+          await txn.rawUpdate('UPDATE property SET address_id = ? WHERE id = ?',
+              [new_address_id, propertyId]);
+        }
       }
-      final addressId = result.first['address_id'];
-      await txn.update(
-        'address',
-        {
-          'cep': cep,
-          'logradouro': logradouro,
-          'bairro': bairro,
-          'localidade': localidade,
-          'uf': uf,
-          'estado': estado,
-        },
-        where: 'id = ?',
-        whereArgs: [addressId],
+      await txn.rawUpdate(
+        'UPDATE property SET title = ?, description = ?, number = ?, complement = ?, price = ?, max_guest = ?, thumbnail = ? WHERE id = ?',
+        [
+          title,
+          description,
+          number,
+          complement,
+          price,
+          max_guest,
+          thumbnail.trim() == '' ? 'image_path' : thumbnail,
+          propertyId
+        ],
       );
-      await txn.update(
-        'property',
-        {
-          'title': title,
-          'description': description,
-          'number': number,
-          'complement': complement,
-          'price': price,
-          'max_guest': max_guest,
-          'thumbnail': thumbnail,
-        },
-        where: 'id = ?',
-        whereArgs: [propertyId],
-      );
-      await txn.delete(
-        'images',
-        where: 'property_id = ?',
-        whereArgs: [propertyId],
-      );
-      for (var image in images) {
-        await txn.rawInsert(
-          'INSERT INTO images(property_id, path) VALUES(?, ?)',
-          [propertyId, image],
-        );
-      }
     });
+  }
+
+  Future<Address> getAdressById(int addressId) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'address',
+      where: 'id = ?',
+      whereArgs: [addressId],
+    );
+    if (maps.isNotEmpty) {
+      return Address(
+        id: maps.first['id'],
+        cep: maps.first['cep'],
+        logradouro: maps.first['logradouro'],
+        bairro: maps.first['bairro'],
+        localidade: maps.first['localidade'],
+        uf: maps.first['uf'],
+        estado: maps.first['estado'],
+      );
+    }
+    return Address(
+      id: 0,
+      cep: '',
+      logradouro: '',
+      bairro: '',
+      localidade: '',
+      uf: '',
+      estado: '',
+    );
   }
 }
