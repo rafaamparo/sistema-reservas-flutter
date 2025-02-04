@@ -82,12 +82,18 @@ class _VerPropsState extends State<VerProps> {
               itemBuilder: (context, index) {
                 final property = properties[index];
                 return Card(
-                  child: ListTile(
-                    leading: Image.network(property.thumbnail),
-                    title: Text(property.title),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [Text(property.description)],
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/verProp',
+                          arguments: property);
+                    },
+                    child: ListTile(
+                      leading: Image.network(property.thumbnail == 'image_path'
+                          ? 'https://png.pngtree.com/png-vector/20240528/ourmid/pngtree-elegant-modern-mansion-with-parked-car-illustration-png-image_12509753.png'
+                          : property.thumbnail),
+                      title: Text(property.title),
+                      subtitle: Text(property.description),
+                      trailing: Text('R\$ ${property.price}'),
                     ),
                   ),
                 );
