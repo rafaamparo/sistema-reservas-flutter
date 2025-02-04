@@ -212,7 +212,9 @@ select id, checkin_date, strftime('%d', checkin_date) as 'Day' from booking wher
         title: maps[i]['title'],
         description: maps[i]['description'],
         number: maps[i]['number'],
-        complement: maps[i]['complement'],
+        complement: maps[i]['complement'] != null
+            ? maps[i]['complement'] as String
+            : "",
         price: maps[i]['price'],
         max_guest: maps[i]['max_guest'],
         thumbnail: maps[i]['thumbnail'],
