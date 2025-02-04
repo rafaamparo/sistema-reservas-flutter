@@ -18,7 +18,7 @@ class DatabaseService {
   }
 
   Future<Database> getDatabase() async {
-    final databaseDirPath = await getDatabasesPath();
+    final databaseDirPath = await getApplicationDocumentsDirectory();
     final databasePath = '$databaseDirPath/sudokuDb.db';
     final database = await openDatabase(
       databasePath,
