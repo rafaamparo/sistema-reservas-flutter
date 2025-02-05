@@ -1,4 +1,5 @@
 import 'package:app_reserva/models/booking.dart';
+import 'package:app_reserva/models/property.dart';
 import 'package:flutter/material.dart';
 import '../services/dbService.dart';
 
@@ -128,10 +129,23 @@ class _UserReservationsPageState extends State<UserReservationsPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Propriedade: nome da propriedade',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
+                        FutureBuilder<Property?>(
+                          future: DatabaseService.instance
+                              .getPropertyById(res.property_id),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Text('Carregando propriedade...');
+                            } else if (snapshot.hasError || !snapshot.hasData) {
+                              return const Text('Propriedade: Indisponível');
+                            } else {
+                              return Text(
+                                'Propriedade: ${snapshot.data!.title}',
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                              );
+                            }
+                          },
                         ),
                         const SizedBox(height: 4),
                         Text(

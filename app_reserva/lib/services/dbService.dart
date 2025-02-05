@@ -331,4 +331,29 @@ select id, checkin_date, strftime('%d', checkin_date) as 'Day' from booking wher
     }
     return bookingsList;
   }
+
+  Future<Property?> getPropertyById(int propertyId) async {
+    final db = await database;
+    final results =
+        await db.query('property', where: 'id = ?', whereArgs: [propertyId]);
+    if (results.isNotEmpty) {
+      final prop = results.first;
+      double avgRating = await getAvgRating(prop['id'] as int);
+      return Property(
+        id: prop['id'] as int,
+        user_id: prop['user_id'] as int,
+        address_id: prop['address_id'] as int,
+        title: prop['title'] as String,
+        description: prop['description'] as String,
+        number: prop['number'] as int,
+        complement:
+            prop['complement'] != null ? prop['complement'] as String : "",
+        price: prop['price'] as double,
+        max_guest: prop['max_guest'] as int,
+        thumbnail: prop['thumbnail'] as String,
+        rating: avgRating,
+      );
+    }
+    return null;
+  }
 }
