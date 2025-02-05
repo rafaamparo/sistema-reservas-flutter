@@ -124,7 +124,8 @@ class _PropertyListPageState extends State<PropertyListPage> {
             ListTile(
               leading: const Icon(Icons.home_filled),
               title: const Text('Minhas Reservas'),
-              onTap: () => Navigator.pushNamed(context, '/minhasReservas'),
+              onTap: () => Navigator.pushNamed(context, '/reservas',
+                  arguments: {'user': userAtual}),
             ),
           ],
         ),

@@ -11,7 +11,7 @@ class PropertyDetailsPage extends StatefulWidget {
 
 class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
   late Property property;
-  dynamic user; // assume user object with .id, .name, .email
+  dynamic user;
   final _guestsController = TextEditingController();
 
   @override
@@ -34,6 +34,7 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
               title: const Text('Fazer Reserva'),
               content: SingleChildScrollView(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     TextField(
                       controller: _guestsController,
@@ -41,13 +42,13 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                       decoration: const InputDecoration(
                           labelText: 'Número de hóspedes'),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 16),
                     InkWell(
                       onTap: () async {
                         final date = await showDatePicker(
                           context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime.now(),
+                          firstDate: DateTime.now()
+                              .subtract(const Duration(days: 365)),
                           lastDate:
                               DateTime.now().add(const Duration(days: 365)),
                         );
@@ -60,12 +61,15 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                       child: InputDecorator(
                         decoration:
                             const InputDecoration(labelText: 'Check-in'),
-                        child: Text(checkIn == null
-                            ? 'Selecione a data'
-                            : DateFormat('yyyy-MM-dd').format(checkIn!)),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text(checkIn == null
+                              ? 'Selecione a data'
+                              : DateFormat('yyyy-MM-dd').format(checkIn!)),
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 16),
                     InkWell(
                       onTap: () async {
                         final date = await showDatePicker(
@@ -84,9 +88,12 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                       child: InputDecorator(
                         decoration:
                             const InputDecoration(labelText: 'Check-out'),
-                        child: Text(checkOut == null
-                            ? 'Selecione a data'
-                            : DateFormat('yyyy-MM-dd').format(checkOut!)),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text(checkOut == null
+                              ? 'Selecione a data'
+                              : DateFormat('yyyy-MM-dd').format(checkOut!)),
+                        ),
                       ),
                     ),
                   ],
@@ -102,10 +109,24 @@ class _PropertyDetailsPageState extends State<PropertyDetailsPage> {
                     if (checkIn == null ||
                         checkOut == null ||
                         _guestsController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('Preencha todos os campos')));
                       return;
                     }
                     final amountGuest =
                         int.tryParse(_guestsController.text) ?? 1;
+                    if (amountGuest <= 0) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text(
+                              'O número de hóspedes deve ser maior que zero.')));
+                      return;
+                    }
+                    if (amountGuest > property.max_guest) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                              'O número de hóspedes não pode exceder ${property.max_guest}')));
+                      return;
+                    }
                     await DatabaseService.instance.createBooking(
                       userId: user.id,
                       property: property,

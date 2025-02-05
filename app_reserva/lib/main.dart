@@ -3,6 +3,7 @@ import 'package:app_reserva/routes/cadastrar.dart';
 import 'package:app_reserva/routes/login.dart';
 import 'package:app_reserva/routes/property_details_page.dart';
 import 'package:app_reserva/routes/property_list_page.dart';
+import 'package:app_reserva/routes/user_reservations_page.dart';
 import 'package:app_reserva/routes/welcome.dart';
 import 'package:app_reserva/theme/appTheme.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -33,6 +34,7 @@ Future main() async {
       '/cadastrar': (context) => const Cadastro(),
       '/busca': (context) => const PropertyListPage(),
       '/detalhes': (context) => const PropertyDetailsPage(),
+      '/reservas': (context) => const UserReservationsPage(),
     },
   ));
 }
